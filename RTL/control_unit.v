@@ -29,6 +29,10 @@ module control_unit(
 
 
    //The behavior of the control unit can be found in Chapter 4, Figure 4.18
+   // RegDst:  0: The register destination number for the write register fomes from the rt field (bits 20:16)
+   //          1: The register destination number for the write register fomes from the rd field (bits 15:11)
+   // RegWrite:   0: None
+   //             1: The register on the write register is written with the value on the write data input
 
    always@(*)begin
 
@@ -40,6 +44,66 @@ module control_unit(
             reg_write = 1'b1;
             mem_read  = 1'b0;
             mem_write = 1'b0;
+            branch    = 1'b0;
+            alu_op    = R_TYPE_OPCODE;
+            jump      = 1'b0;
+         end
+
+         ADDI:begin
+            reg_dst   = 1'b0;
+            alu_src   = 1'b1;
+            mem_2_reg = 1'b0;
+            reg_write = 1'b1;
+            mem_read  = 1'b0;
+            mem_write = 1'b0;
+            branch    = 1'b0;
+            alu_op    = ADD_OPCODE;
+            jump      = 1'b0;
+         end
+
+         BRANCH_EQ:begin
+            reg_dst   = 1'bx; // Don't care
+            alu_src   = 1'b0;
+            mem_2_reg = 1'bx; // Don't care
+            reg_write = 1'b0;
+            mem_read  = 1'b0;
+            mem_write = 1'b0;
+            branch    = 1'b1;
+            alu_op    = SUB_OPCODE;
+            jump      = 1'b0;
+         end
+
+         JUMP:begin
+            reg_dst   = 1'bx;
+            alu_src   = 1'bx;
+            mem_2_reg = 1'bx;
+            reg_write = 1'b0;
+            mem_read  = 1'b0;
+            mem_write = 1'b0;
+            branch    = 1'bx;
+            alu_op    = 1'bx;
+            jump      = 1'b1;
+         end
+
+         LOAD_WORD:begin
+            reg_dst   = 1'b0;
+            alu_src   = 1'b1;
+            mem_2_reg = 1'b1;
+            reg_write = 1'b1;
+            mem_read  = 1'b1;
+            mem_write = 1'b0;
+            branch    = 1'b0;
+            alu_op    = R_TYPE_OPCODE;
+            jump      = 1'b0;
+         end
+
+         STORE_WORD:begin
+            reg_dst   = 1'bx;
+            alu_src   = 1'b1;
+            mem_2_reg = 1'bx;
+            reg_write = 1'b0;
+            mem_read  = 1'b0;
+            mem_write = 1'b1;
             branch    = 1'b0;
             alu_op    = R_TYPE_OPCODE;
             jump      = 1'b0;
