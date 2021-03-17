@@ -10,9 +10,9 @@ module alu_control(
    
    //The ALUOP codes can be found
    //in chapter 4.4 of the book.
-   parameter [1:0] ADD_OPCODE    = 2'd0;
-   parameter [1:0] SUB_OPCODE    = 2'd1;
-   parameter [1:0] R_TYPE_OPCODE = 2'd2;
+   parameter [1:0] ADD_OPCODE    = 2'd0; // 00
+   parameter [1:0] SUB_OPCODE    = 2'd1; // 01
+   parameter [1:0] R_TYPE_OPCODE = 2'd2; // 10
    //The alu control codes can be found
    //in chapter 4.4 of the book.
    parameter [3:0] AND_OP        = 4'd0;
@@ -23,6 +23,7 @@ module alu_control(
    parameter [3:0] SUB_OP        = 4'd5;
    parameter [3:0] SLT_OP        = 4'd7;
    parameter [3:0] NOR_OP        = 4'd12; 
+   parameter [3:0] MULT_OP       = 4'd14;
    //The decoding of the instruction funtion field into the desired
    //alu operation can be found in Figure 4.12 of the Patterson Book,
    //section 4.4
@@ -34,11 +35,13 @@ module alu_control(
    parameter [5:0] FUNC_SLT      = 6'b101010;
    parameter [5:0] FUNC_SLL      = 6'b000000;
    parameter [5:0] FUNC_SRL      = 6'b000010;
+   parameter [5:0] FUNC_MULT     = 6'b011000;
 
 	reg [3:0] rtype_op;
 
    always @(*) begin
 		case(function_field)
+         FUNC_MULT:  rtype_op = MULT_OP;
 		   FUNC_ADD	:  rtype_op = ADD_OP;
 		   FUNC_SUB	:  rtype_op = SUB_OP;
 		   FUNC_AND	:  rtype_op = AND_OP;
