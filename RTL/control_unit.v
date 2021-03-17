@@ -93,7 +93,7 @@ module control_unit(
             mem_read  = 1'b1;
             mem_write = 1'b0;
             branch    = 1'b0;
-            alu_op    = R_TYPE_OPCODE;
+            alu_op    = ADD_OPCODE; // R_TYPE_OPCODE
             jump      = 1'b0;
          end
 
@@ -105,7 +105,7 @@ module control_unit(
             mem_read  = 1'b0;
             mem_write = 1'b1;
             branch    = 1'b0;
-            alu_op    = R_TYPE_OPCODE;
+            alu_op    = ADD_OPCODE;
             jump      = 1'b0;
          end
     
