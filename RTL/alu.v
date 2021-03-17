@@ -34,11 +34,12 @@ module alu #(
    parameter [3:0] SUB_OP = 4'd5;
    parameter [3:0] SLT_OP = 4'd7;
    parameter [3:0] NOR_OP = 4'd12;
+   parameter [3:0] MULT_OP = 4'd14;
 
 
    //REG AND WIRE DECLARATION
    reg signed [DATA_W-1:0] sub_out,add_out,and_out,or_out,
-                           nor_out,slt_out, sll_out, srl_out;
+                           nor_out,slt_out, sll_out, srl_out, mult_out;
 	reg 		               overflow_add,overflow_sub,
                            msb_equal_flag;
    
@@ -61,6 +62,7 @@ module alu #(
 
    //ARITHMETIC and LOGIC OPERATIONS
    always@(*)begin
+      mult_out =   alu_in_0 * alu_in_1; // Multiplication
       add_out  =   alu_in_0 + alu_in_1;
       sll_out  =   alu_in_1 << shft_amnt;
       srl_out  =   alu_in_1 >> shft_amnt;
@@ -76,6 +78,7 @@ module alu #(
    //blocks described above
 	always @(*) begin
 		case (alu_ctrl)
+         MULT_OP: alu_out = mult_out;
 			AND_OP:  alu_out = and_out;
 			OR_OP:   alu_out =  or_out;
 			NOR_OP:  alu_out = nor_out;
