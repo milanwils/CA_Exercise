@@ -55,7 +55,7 @@ wire signed [31:0] immediate_extended;
 reg [31:0] updated_pc_ID_EXE;
 reg [31:0] instruction_ID_EXE;
 reg [31:0] Rs_ID_EXE;
-reg [31:0] Rd_ID_EXE;
+reg [31:0] Rt_ID_EXE;
 reg [31:0] Sign_Extend_Instr_ID_EXE;
 reg MemtoReg_ID_EXE, RegWrite_ID_EXE, Branch_ID_EXE, MemWrite_ID_EXE, MemRead_ID_EXE, Jump_ID_EXE, ALUSrc_ID_EXE, RegDst_ID_EXE;
 reg[1:0] ALUOp_ID_EXE;
@@ -258,13 +258,13 @@ reg_arstn_en #(.DATA_W(32)) Rs_pipe_ID_EXE(
    .dout   (Rs_ID_EXE)
 );
 
-// Rd
-reg_arstn_en #(.DATA_W(32)) Rd_pipe_ID_EXE(
+// Rt
+reg_arstn_en #(.DATA_W(32)) Rt_pipe_ID_EXE(
    .clk    (clk),
    .arst_n (arst_n),
    .din    (regfile_data_2),
    .en     (enable),
-   .dout   (Rd_ID_EXE)
+   .dout   (Rt_ID_EXE)
 );
 
 // Sign_Extend_Instr
@@ -393,7 +393,6 @@ reg_arstn_en#(
 );
 
 // ALU result zero flag
-
 reg_arstn_en#(
    .DATA_W(1)
 )ALU_result_zero_pipe_EXE_MEM(
