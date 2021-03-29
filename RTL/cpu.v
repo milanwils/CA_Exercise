@@ -48,7 +48,7 @@ wire [      31:0] regfile_wdata, dram_data,alu_out,
                   regfile_data_1,regfile_data_2,
                   alu_operand_2;
 
-reg [31:0] updated_pc_IF_ID, instruction_pipe_IF_ID;
+reg [31:0] updated_pc_IF_ID, instruction_IF_ID;
 
 wire signed [31:0] immediate_extended;
 
