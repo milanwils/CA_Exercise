@@ -233,7 +233,7 @@ reg_arstn #(.DATA_W(32)) instruction_pipe_IF_ID(
 
 // Updated PC
 reg_arstn_en #(.DATA_W(32)) updated_pc_pipe_ID_EXE(
-   .clk    (clk),reg [31:0] Rd_ID_EXE;
+   .clk    (clk),
    .arst_n (arst_n),
    .din    (updated_pc_IF_ID),
    .en     (enable),
