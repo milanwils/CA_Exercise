@@ -70,7 +70,7 @@ reg [31:0] ReadData_MEM_WB, alu_out_MEM_WB;
 reg [4:0] Rd_MEM_WB;
 reg MemtoReg_MEM_WB, RegWrite_MEM_WB;
 
-assign immediate_extended = $signed(instruction[15:0]);
+assign immediate_extended = $signed(instruction_IF_ID[15:0]);
 
 
 pc #(
@@ -219,6 +219,7 @@ reg_arstn #(.DATA_W(32)) updated_pc_pipe_IF_ID(
    .clk(clk),
    .arst_n(arst_n),
    .din(updated_pc),
+   .en  (enable),
    .dout(updated_pc_IF_ID)
 );
 
@@ -227,6 +228,7 @@ reg_arstn #(.DATA_W(32)) instruction_pipe_IF_ID(
    .clk(clk),
    .arst_n(arst_n),
    .din(instruction),
+   .en (enable),
    .dout(instruction_IF_ID)
 );
 
