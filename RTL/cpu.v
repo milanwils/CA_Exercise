@@ -48,7 +48,26 @@ wire [      31:0] regfile_wdata, dram_data,alu_out,
                   regfile_data_1,regfile_data_2,
                   alu_operand_2;
 
+reg [31:0] updated_pc_IF_ID, instruction_pipe_IF_ID;
+
 wire signed [31:0] immediate_extended;
+
+reg [31:0] updated_pc_ID_EXE;
+reg [31:0] instruction_ID_EXE;
+reg [31:0] Rs_ID_EXE;
+reg [31:0] Rd_ID_EXE;
+reg [31:0] Sign_Extend_Instr_ID_EXE;
+reg MemtoReg_ID_EXE, RegWrite_ID_EXE, Branch_ID_EXE, MemWrite_ID_EXE, MemRead_ID_EXE, Jump_ID_EXE, ALUSrc_ID_EXE, RegDst_ID_EXE;
+reg[1:0] ALUOp_ID_EXE;
+
+// EXE/MEM
+reg [31:0] branch_pc_EXE_MEM, jump_pc_EXE_MEM, alu_out_EXE_MEM, Rt_EXE_MEM, Rd_EXE_MEM;
+reg zero_flag_EXE_MEM, MemtoReg_EXE_MEM, RegWrite_EXE_MEM, Branch_EXE_MEM, MemWrite_EXE_MEM, MemRead_EXE_MEM, Jump_EXE_MEM;
+
+// MEM/WB
+reg [31:0] ReadData_MEM_WB, alu_out_MEM_WB;
+reg [5:0] Rd_MEM_WB;
+reg MemtoReg_MEM_WB, RegWrite_MEM_WB;
 
 assign immediate_extended = $signed(instruction[15:0]);
 
@@ -195,7 +214,6 @@ branch_unit#(
 // Register for IF/ID
 
 // Updated PC
-reg [31:0] updated_pc_IF_ID;
 reg_arstn #(.DATA_W(32)) updated_pc_pipe_IF_ID(
    .clk(clk),
    .arst_n(arst_n),
@@ -204,7 +222,6 @@ reg_arstn #(.DATA_W(32)) updated_pc_pipe_IF_ID(
 );
 
 // Instruction
-reg [31:0] instruction_pipe_IF_ID;
 reg_arstn #(.DATA_W(32)) instruction_pipe_IF_ID(
    .clk(clk),
    .arst_n(arst_n),
@@ -215,9 +232,8 @@ reg_arstn #(.DATA_W(32)) instruction_pipe_IF_ID(
 // Registers for ID/EXE
 
 // Updated PC
-reg [31:0] updated_pc_ID_EXE;
 reg_arstn_en #(.DATA_W(32)) updated_pc_pipe_ID_EXE(
-   .clk    (clk),
+   .clk    (clk),reg [31:0] Rd_ID_EXE;
    .arst_n (arst_n),
    .din    (updated_pc_IF_ID),
    .en     (enable),
@@ -225,7 +241,6 @@ reg_arstn_en #(.DATA_W(32)) updated_pc_pipe_ID_EXE(
 );
 
 // Instruction [20:11]
-reg [31:0] instruction_ID_EXE;
 reg_arstn_en #(.DATA_W(32)) instruction_pipe_ID_EXE(
    .clk    (clk),
    .arst_n (arst_n),
@@ -235,7 +250,6 @@ reg_arstn_en #(.DATA_W(32)) instruction_pipe_ID_EXE(
 );
 
 // Rs
-reg [31:0] Rs_ID_EXE;
 reg_arstn_en #(.DATA_W(32)) Rs_pipe_ID_EXE(
    .clk    (clk),
    .arst_n (arst_n),
@@ -245,7 +259,6 @@ reg_arstn_en #(.DATA_W(32)) Rs_pipe_ID_EXE(
 );
 
 // Rd
-reg [31:0] Rd_ID_EXE;
 reg_arstn_en #(.DATA_W(32)) Rd_pipe_ID_EXE(
    .clk    (clk),
    .arst_n (arst_n),
@@ -255,7 +268,6 @@ reg_arstn_en #(.DATA_W(32)) Rd_pipe_ID_EXE(
 );
 
 // Sign_Extend_Instr
-reg [31:0] Sign_Extend_Instr_ID_EXE;
 reg_arstn_en #(.DATA_W(32)) Sign_Extend_Instr_pipe_ID_EXE(
    .clk    (clk),
    .arst_n (arst_n),
@@ -266,7 +278,6 @@ reg_arstn_en #(.DATA_W(32)) Sign_Extend_Instr_pipe_ID_EXE(
 
 // Control signals
 // WB::MemtoReg
-reg MemtoReg_ID_EXE;
 reg_arstn_en #(.DATA_W(1)) MemtoReg_pipe_ID_EXE(
    .clk    (clk),
    .arst_n (arst_n),
@@ -276,7 +287,6 @@ reg_arstn_en #(.DATA_W(1)) MemtoReg_pipe_ID_EXE(
 );
 
 // WB::RegWrite
-reg RegWrite_ID_EXE;
 reg_arstn_en #(.DATA_W(1)) RegWrite_pipe_ID_EXE(
    .clk    (clk),
    .arst_n (arst_n),
@@ -286,7 +296,6 @@ reg_arstn_en #(.DATA_W(1)) RegWrite_pipe_ID_EXE(
 );
 
 // M::Branch
-reg Branch_ID_EXE;
 reg_arstn_en #(.DATA_W(1)) Branch_pipe_ID_EXE(
    .clk    (clk),
    .arst_n (arst_n),
@@ -296,7 +305,6 @@ reg_arstn_en #(.DATA_W(1)) Branch_pipe_ID_EXE(
 );
 
 // M::MemWrite
-reg MemWrite_ID_EXE;
 reg_arstn_en #(.DATA_W(1)) MemWrite_pipe_ID_EXE(
    .clk    (clk),
    .arst_n (arst_n),
@@ -306,7 +314,6 @@ reg_arstn_en #(.DATA_W(1)) MemWrite_pipe_ID_EXE(
 );
 
 // M::MemRead
-reg MemRead_ID_EXE;
 reg_arstn_en #(.DATA_W(1)) MemRead_pipe_ID_EXE(
    .clk    (clk),
    .arst_n (arst_n),
@@ -316,7 +323,6 @@ reg_arstn_en #(.DATA_W(1)) MemRead_pipe_ID_EXE(
 );
 
 // M::Jump
-reg Jump_ID_EXE;
 reg_arstn_en #(.DATA_W(1)) Jump_pipe_ID_EXE(
    .clk    (clk),
    .arst_n (arst_n),
@@ -326,7 +332,6 @@ reg_arstn_en #(.DATA_W(1)) Jump_pipe_ID_EXE(
 );
 
 // EX::ALUSrc
-reg ALUSrc_ID_EXE;
 reg_arstn_en #(.DATA_W(1)) ALUSrc_pipe_ID_EXE(
    .clk    (clk),
    .arst_n (arst_n),
@@ -336,7 +341,6 @@ reg_arstn_en #(.DATA_W(1)) ALUSrc_pipe_ID_EXE(
 );
 
 // EX::ALUOp
-reg[1:0] ALUOp_ID_EXE;
 reg_arstn_en #(.DATA_W(2)) ALUOp_pipe_ID_EXE(
    .clk    (clk),
    .arst_n (arst_n),
@@ -346,7 +350,6 @@ reg_arstn_en #(.DATA_W(2)) ALUOp_pipe_ID_EXE(
 );
 
 // EX::RegDst
-reg RegDst_ID_EXE;
 reg_arstn_en #(.DATA_W(1)) RegDst_pipe_ID_EXE(
    .clk    (clk),
    .arst_n (arst_n),
@@ -357,7 +360,6 @@ reg_arstn_en #(.DATA_W(1)) RegDst_pipe_ID_EXE(
 
 // Registers for EXE/MEM
 // branch pc
-reg [31:0] branch_pc_EXE_MEM;
 reg_arstn_en#(
    .DATA_W(32)
 )branch_pc_pipe_EXE_MEM(
@@ -369,7 +371,6 @@ reg_arstn_en#(
 );
 
 // jump pc
-reg [31:0] jump_pc_EXE_MEM;
 reg_arstn_en#(
    .DATA_W(32)
 )jump_pc_pipe_EXE_MEM(
@@ -381,7 +382,6 @@ reg_arstn_en#(
 );
 
 // ALU result
-reg [31:0] alu_out_EXE_MEM;
 reg_arstn_en#(
    .DATA_W(32)
 )ALU_result_pipe_EXE_MEM(
@@ -393,7 +393,7 @@ reg_arstn_en#(
 );
 
 // ALU result zero flag
-reg zero_flag_EXE_MEM;
+
 reg_arstn_en#(
    .DATA_W(1)
 )ALU_result_zero_pipe_EXE_MEM(
@@ -405,7 +405,6 @@ reg_arstn_en#(
 );
 
 // Register data 2
-reg [31:0] Rt_EXE_MEM;
 reg_arstn_en#(
    .DATA_W(32)
 )Rt_pipe_EXE_MEM(
@@ -417,7 +416,6 @@ reg_arstn_en#(
 );
 
 // Register writeback address
-reg [31:0] Rd_EXE_MEM;
 reg_arstn_en#(
    .DATA_W(32)
 )Rd_pipe_EXE_MEM(
@@ -430,7 +428,6 @@ reg_arstn_en#(
 
 // Control signals
 // WB::MemtoReg
-reg MemtoReg_EXE_MEM;
 reg_arstn_en #(.DATA_W(1)) MemtoReg_pipe_EXE_MEM(
    .clk    (clk),
    .arst_n (arst_n),
@@ -440,7 +437,6 @@ reg_arstn_en #(.DATA_W(1)) MemtoReg_pipe_EXE_MEM(
 );
 
 // WB::RegWrite
-reg RegWrite_EXE_MEM;
 reg_arstn_en #(.DATA_W(1)) RegWrite_pipe_EXE_MEM(
    .clk    (clk),
    .arst_n (arst_n),
@@ -450,7 +446,6 @@ reg_arstn_en #(.DATA_W(1)) RegWrite_pipe_EXE_MEM(
 );
 
 // M::Branch
-reg Branch_EXE_MEM;
 reg_arstn_en #(.DATA_W(1)) Branch_pipe_EXE_MEM(
    .clk    (clk),
    .arst_n (arst_n),
@@ -460,7 +455,6 @@ reg_arstn_en #(.DATA_W(1)) Branch_pipe_EXE_MEM(
 );
 
 // M::MemWrite
-reg MemWrite_EXE_MEM;
 reg_arstn_en #(.DATA_W(1)) MemWrite_pipe_EXE_MEM(
    .clk    (clk),
    .arst_n (arst_n),
@@ -470,7 +464,6 @@ reg_arstn_en #(.DATA_W(1)) MemWrite_pipe_EXE_MEM(
 );
 
 // M::MemRead
-reg MemRead_EXE_MEM;
 reg_arstn_en #(.DATA_W(1)) MemRead_pipe_EXE_MEM(
    .clk    (clk),
    .arst_n (arst_n),
@@ -480,7 +473,6 @@ reg_arstn_en #(.DATA_W(1)) MemRead_pipe_EXE_MEM(
 );
 
 // M::Jump
-reg Jump_EXE_MEM;
 reg_arstn_en #(.DATA_W(1)) Jump_pipe_EXE_MEM(
    .clk    (clk),
    .arst_n (arst_n),
@@ -493,7 +485,6 @@ reg_arstn_en #(.DATA_W(1)) Jump_pipe_EXE_MEM(
 // Registers for MEM/WB
 
 // ReadData
-reg [31:0] ReadData_MEM_WB;
 reg_arstn #(.DATA_W(32)) ReadData_pipe_MEM_WB(
    .clk(clk),
    .arst_n(arst_n),
@@ -502,7 +493,6 @@ reg_arstn #(.DATA_W(32)) ReadData_pipe_MEM_WB(
 );
 
 // ALU Result
-reg [31:0] alu_out_MEM_WB;
 reg_arstn #(.DATA_W(32)) alu_out_pipe_MEM_WB(
    .clk(clk),
    .arst_n(arst_n),
@@ -511,7 +501,6 @@ reg_arstn #(.DATA_W(32)) alu_out_pipe_MEM_WB(
 );
 
 // Rd
-reg [5:0] Rd_MEM_WB;
 reg_arstn #(.DATA_W(6)) Rd_pipe_MEM_WB(
    .clk(clk),
    .arst_n(arst_n),
@@ -520,7 +509,6 @@ reg_arstn #(.DATA_W(6)) Rd_pipe_MEM_WB(
 );
 
 // WB::MemtoReg
-reg MemtoReg_MEM_WB;
 reg_arstn #(.DATA_W(1)) MemtoReg_pipe_MEM_WB(
    .clk    (clk),
    .arst_n (arst_n),
@@ -529,7 +517,6 @@ reg_arstn #(.DATA_W(1)) MemtoReg_pipe_MEM_WB(
 );
 
 // WB::RegWrite
-reg RegWrite_MEM_WB;
 reg_arstn #(.DATA_W(1)) RegWrite_pipe_MEM_WB(
    .clk    (clk),
    .arst_n (arst_n),
