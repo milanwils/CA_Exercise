@@ -29,10 +29,6 @@ module control_unit(
 
 
    //The behavior of the control unit can be found in Chapter 4, Figure 4.18
-   // RegDst:  0: The register destination number for the write register fomes from the rt field (bits 20:16)
-   //          1: The register destination number for the write register fomes from the rd field (bits 15:11)
-   // RegWrite:   0: None
-   //             1: The register on the write register is written with the value on the write data input
 
    always@(*)begin
 
@@ -93,7 +89,7 @@ module control_unit(
             mem_read  = 1'b1;
             mem_write = 1'b0;
             branch    = 1'b0;
-            alu_op    = ADD_OPCODE; // R_TYPE_OPCODE
+            alu_op    = ADD_OPCODE;
             jump      = 1'b0;
          end
 
