@@ -61,12 +61,13 @@ reg MemtoReg_ID_EXE, RegWrite_ID_EXE, Branch_ID_EXE, MemWrite_ID_EXE, MemRead_ID
 reg[1:0] ALUOp_ID_EXE;
 
 // EXE/MEM
-reg [31:0] branch_pc_EXE_MEM, jump_pc_EXE_MEM, alu_out_EXE_MEM, Rt_EXE_MEM, Rd_EXE_MEM;
+reg [31:0] branch_pc_EXE_MEM, jump_pc_EXE_MEM, alu_out_EXE_MEM, Rt_EXE_MEM;
+reg [4:0] Rd_EXE_MEM;
 reg zero_flag_EXE_MEM, MemtoReg_EXE_MEM, RegWrite_EXE_MEM, Branch_EXE_MEM, MemWrite_EXE_MEM, MemRead_EXE_MEM, Jump_EXE_MEM;
 
 // MEM/WB
 reg [31:0] ReadData_MEM_WB, alu_out_MEM_WB;
-reg [5:0] Rd_MEM_WB;
+reg [4:0] Rd_MEM_WB;
 reg MemtoReg_MEM_WB, RegWrite_MEM_WB;
 
 assign immediate_extended = $signed(instruction[15:0]);
@@ -416,7 +417,7 @@ reg_arstn_en#(
 
 // Register writeback address
 reg_arstn_en#(
-   .DATA_W(32)
+   .DATA_W(5)
 )Rd_pipe_EXE_MEM(
    .clk    (clk),
    .arst_n (arst_n),
@@ -500,7 +501,7 @@ reg_arstn #(.DATA_W(32)) alu_out_pipe_MEM_WB(
 );
 
 // Rd
-reg_arstn #(.DATA_W(6)) Rd_pipe_MEM_WB(
+reg_arstn #(.DATA_W(5)) Rd_pipe_MEM_WB(
    .clk(clk),
    .arst_n(arst_n),
    .din(Rd_EXE_MEM),
