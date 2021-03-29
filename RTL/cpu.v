@@ -215,7 +215,7 @@ branch_unit#(
 // Register for IF/ID
 
 // Updated PC
-reg_arstn #(.DATA_W(32)) updated_pc_pipe_IF_ID(
+reg_arstn_en #(.DATA_W(32)) updated_pc_pipe_IF_ID(
    .clk(clk),
    .arst_n(arst_n),
    .din(updated_pc),
@@ -224,7 +224,7 @@ reg_arstn #(.DATA_W(32)) updated_pc_pipe_IF_ID(
 );
 
 // Instruction
-reg_arstn #(.DATA_W(32)) instruction_pipe_IF_ID(
+reg_arstn_en #(.DATA_W(32)) instruction_pipe_IF_ID(
    .clk(clk),
    .arst_n(arst_n),
    .din(instruction),
