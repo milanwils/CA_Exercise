@@ -5,7 +5,7 @@ module mux_3
       input  wire [DATA_W-1:0] input_a,
       input  wire [DATA_W-1:0] input_b,
       input  wire [DATA_W-1:0] input_c,
-      input  wire              select_a,
+      input  wire [1:0] select_a,
       output reg  [DATA_W-1:0] mux_out
    );
 
