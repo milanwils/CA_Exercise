@@ -162,7 +162,7 @@ mux_2 #(
 forwarding_unit #(
    .DATA_W(5)
 ) forwatding_unit_exe (
-   .Rs        (Rs_ID_EXE)
+   .Rs        (Rs_ID_EXE),
    .Rt        (Rt_ID_EXE),
    .Rd_EX_MEM (Rd_EX_MEM),
    .Rd_MEM_WB (Rd_MEM_WB),
