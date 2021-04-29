@@ -46,7 +46,7 @@ wire              reg_dst,branch,mem_read,mem_2_reg,
 wire [       4:0] regfile_waddr;
 wire [      31:0] regfile_wdata, dram_data,alu_out,
                   regfile_data_1,regfile_data_2,
-                  alu_operand_2;
+                  alu_operand_2, alu_operand_1;
 
 reg [31:0] updated_pc_IF_ID, instruction_IF_ID;
 
@@ -58,10 +58,10 @@ reg [31:0] Rs_ID_EXE;
 reg [31:0] Rt_ID_EXE;
 reg [31:0] Sign_Extend_Instr_ID_EXE;
 reg MemtoReg_ID_EXE, RegWrite_ID_EXE, Branch_ID_EXE, MemWrite_ID_EXE, MemRead_ID_EXE, Jump_ID_EXE, ALUSrc_ID_EXE, RegDst_ID_EXE;
-reg[1:0] ALUOp_ID_EXE;
+reg[1:0] ALUOp_ID_EXE, ForwardA, ForwardB;
 
 // EXE/MEM
-reg [31:0] branch_pc_EXE_MEM, jump_pc_EXE_MEM, alu_out_EXE_MEM, Rt_EXE_MEM;
+reg [31:0] branch_pc_EXE_MEM, jump_pc_EXE_MEM, alu_out_EXE_MEM, Rt_EXE_MEM, ALUSrc_out;
 reg [4:0] Rd_EXE_MEM;
 reg zero_flag_EXE_MEM, MemtoReg_EXE_MEM, RegWrite_EXE_MEM, Branch_EXE_MEM, MemWrite_EXE_MEM, MemRead_EXE_MEM, Jump_EXE_MEM;
 
@@ -156,14 +156,44 @@ mux_2 #(
    .input_a (Sign_Extend_Instr_ID_EXE),
    .input_b (Rt_ID_EXE    ),
    .select_a(ALUSrc_ID_EXE           ),
-   .mux_out (alu_operand_2     )
+   .mux_out (ALUSrc_out)
 );
 
+forwarding_unit #(
+   .DATA_W(5)
+) forwatding_unit_exe (
+   .Rs        (Rs_ID_EXE)
+   .Rt        (Rt_ID_EXE),
+   .Rd_EX_MEM (Rd_EX_MEM),
+   .Rd_MEM_WB (Rd_MEM_WB),
+   .forward_a (ForwardA),
+   .forward_b (ForwardB)
+);
+
+mux_3 #(
+   .DATA_W(32)
+) forward_a_mux (
+   .input_a (Rs_ID_EXE),
+   .input_b (regfile_wdata),
+   .input_c (alu_out_EXE_MEM),
+   .select_a(ForwardA),
+   .mux_out (alu_operand_1)
+);
+
+mux_3 #(
+   .DATA_W(32)
+) forward_b_mux (
+   .input_a (ALUSrc_out),
+   .input_b (regfile_wdata),
+   .input_c (alu_out_EXE_MEM),
+   .select_a(ForwardB),
+   .mux_out (alu_operand_2)
+);
 
 alu#(
    .DATA_W(32)
 ) alu(
-   .alu_in_0 (Rs_ID_EXE     ),
+   .alu_in_0 (alu_operand_1 ),
    .alu_in_1 (alu_operand_2 ),
    .alu_ctrl (alu_control   ),
    .alu_out  (alu_out       ),
