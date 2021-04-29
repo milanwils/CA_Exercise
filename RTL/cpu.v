@@ -176,8 +176,8 @@ mux_3 #(
    .DATA_W(32)
 ) forward_a_mux (
    .input_a (Rs_ID_EXE),
-   .input_b (regfile_wdata),
-   .input_c (alu_out_EXE_MEM),
+   .input_b (alu_out_EXE_MEM),
+   .input_c (regfile_wdata),
    .select_a(ForwardA),
    .mux_out (alu_operand_1)
 );
@@ -186,8 +186,8 @@ mux_3 #(
    .DATA_W(32)
 ) forward_b_mux (
    .input_a (ALUSrc_out),
-   .input_b (regfile_wdata),
-   .input_c (alu_out_EXE_MEM),
+   .input_b (alu_out_EXE_MEM),
+   .input_c (regfile_wdata),
    .select_a(ForwardB),
    .mux_out (alu_operand_2)
 );
