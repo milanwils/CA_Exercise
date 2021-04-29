@@ -164,7 +164,7 @@ forwarding_unit #(
 ) forwarding_unit_exe (
    .Rs        (Rs_ID_EXE),
    .Rt        (Rt_ID_EXE),
-   .Rd_EX_MEM (Rd_EX_MEM),
+   .Rd_EX_MEM (Rd_EXE_MEM),
    .Rd_MEM_WB (Rd_MEM_WB),
    .RegWrite_EX_MEM (RegWrite_EXE_MEM),
    .RegWrite_MEM_WB (RegWrite_MEM_WB),
